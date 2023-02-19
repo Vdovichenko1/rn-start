@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 
-import { togglePassword } from "./togglePassword";
+import { togglePassword } from "../utils/togglePassword";
 
 import * as Font from "expo-font";
 import { AppLoading } from "expo";

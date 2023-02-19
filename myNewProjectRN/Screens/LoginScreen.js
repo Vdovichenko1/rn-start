@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 
-import { togglePassword } from "./togglePassword";
+import { togglePassword } from "../utils/togglePassword";
 
 const initialState = {
   email: "",
