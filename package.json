@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "expo-app-loading": "^2.1.1",
+    "expo-font": "^11.0.1"
+  }
+}
