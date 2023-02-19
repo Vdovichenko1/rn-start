@@ -1,4 +1,7 @@
+import { useState } from "react";
 import {
+  Keyboard,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -6,7 +9,23 @@ import {
   View,
 } from "react-native";
 
+import { togglePassword } from "./togglePassword";
+
+const initialState = {
+  email: "",
+  password: "",
+};
+
 export default function LoginScreen() {
+  const { passVisibility, handlePassword } = togglePassword();
+  const [state, setState] = useState(initialState);
+
+  const submitForm = () => {
+    console.log(state);
+    Keyboard.dismiss();
+    setState(initialState);
+  };
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contain}>
@@ -16,13 +35,32 @@ export default function LoginScreen() {
         <TextInput
           placeholder="Адреса електронної пошти"
           style={styles.input}
+          value={state.email}
+          onChangeText={(value) =>
+            setState((prev) => ({ ...prev, email: value }))
+          }
         />
-        <TextInput
-          placeholder="Пароль"
-          style={styles.input}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity activeOpacity={0.5} style={styles.button}>
+        <View>
+          <TextInput
+            placeholder="Пароль"
+            style={styles.input}
+            secureTextEntry={passVisibility}
+            value={state.password}
+            onChangeText={(value) =>
+              setState((prev) => ({ ...prev, password: value }))
+            }
+          />
+          <Pressable onPress={handlePassword}>
+            <Text style={styles.hidenPass}>
+              {passVisibility ? "Показати" : "Приховати"}
+            </Text>
+          </Pressable>
+        </View>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={styles.button}
+          onPress={submitForm}
+        >
           <Text style={styles.btnText}>Увійти</Text>
         </TouchableOpacity>
       </View>
@@ -64,6 +102,12 @@ const styles = StyleSheet.create({
 
     marginBottom: 16,
     paddingHorizontal: 16,
+  },
+  hidenPass: {
+    position: "absolute",
+    top: -50,
+    left: 285,
+    color: "#1B4371",
   },
   button: {
     backgroundColor: "#FF6C00",
