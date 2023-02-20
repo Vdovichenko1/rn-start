@@ -33,10 +33,10 @@ export const useRoute = (isAuth) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Публикації"
+        name="Публікації"
         component={PostsScreen}
         options={{
-          title: "Публикації",
+          title: "Публікації",
           headerTitleStyle: {
             marginLeft: 120,
           },
