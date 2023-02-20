@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerLogin: {
+    fontFamily: "Roboto-Medium",
     marginTop: 32,
     marginBottom: 32,
     fontSize: 30,

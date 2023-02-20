@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   TouchableOpacity,
   Image,
@@ -7,21 +7,10 @@ import {
   TextInput,
   View,
   Keyboard,
-  Dimensions,
   Pressable,
 } from "react-native";
 
 import { togglePassword } from "../utils/togglePassword";
-
-import * as Font from "expo-font";
-import { AppLoading } from "expo";
-
-const loadFonts = async () => {
-  await Font.loadAsync({
-    "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
-  });
-};
 
 const initialState = {
   login: "",
@@ -32,36 +21,12 @@ const initialState = {
 export default function RegistrationScreen() {
   const { passVisibility, handlePassword } = togglePassword();
   const [state, setState] = useState(initialState);
-  //   const [isReady, setIsReady] = useState(false);
-  //   const [dimensions, setDimensions] = useState(
-  //     Dimensions.get("window").width - 20 * 2
-  //   );
-  //   useEffect(() => {
-  //     const onChange = () => {
-  //       const width = Dimensions.get("window").width;
-  //       console.log(width);
-  //     };
-  //     Dimensions.addEventListener("change", onChange);
-  //     return () => {
-  //       Dimensions.removeEventListener("change", onChange);
-  //     };
-  //   }, []);
 
   const submitForm = () => {
     console.log(state);
     Keyboard.dismiss();
     setState(initialState);
   };
-
-  //   if (!isReady) {
-  //     return (
-  //       <AppLoading
-  //         startAsync={loadFonts}
-  //         onFinish={() => setIsReady(true)}
-  //         onError={console.warn}
-  //       />
-  //     );
-  //   }
 
   return (
     <View style={styles.mainContainer}>
@@ -139,6 +104,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
+    fontFamily: "Roboto-Medium",
     marginBottom: 32,
     fontSize: 30,
     lineHeight: 35,
@@ -160,6 +126,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   hidenPass: {
+    fontFamily: "Roboto-Regular",
     position: "absolute",
     top: -50,
     left: 285,
@@ -175,11 +142,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   btnText: {
+    fontFamily: "Roboto-Regular",
     color: "#FFFFFF",
     fontSize: 16,
     lineHeight: 19,
   },
   signIn: {
+    fontFamily: "Roboto-Regular",
     marginBottom: 45,
   },
 });
