@@ -7,7 +7,7 @@ import PostsScreen from "./Screens/main/PostsScreen";
 import CreatePostsScreen from "./Screens/main/CreatePostsScreen";
 import ProfileScreen from "./Screens/main/ProfileScreen";
 
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/Feather";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 const Stack = createStackNavigator();
@@ -36,7 +36,6 @@ export const useRoute = (isAuth) => {
         name="Публікації"
         component={PostsScreen}
         options={{
-          title: "Публікації",
           headerTitleStyle: {
             marginLeft: 120,
           },
@@ -46,29 +45,41 @@ export const useRoute = (isAuth) => {
               onPress={() => alert("This is a button!")}
               color="#212121"
             >
-              <Ionicons name="exit-outline" size={24} color="black" />
+              <Icon name="log-out" size={24} color="#BDBDBD" />
             </TouchableOpacity>
           ),
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
-            <AntDesign name="appstore-o" size={24} color="black" />
+            <Icon name="grid" size={24} color="#212121" />
           ),
         }}
       />
       <Tab.Screen
-        name="CreatePostsScreen"
+        name="Створити публікацію"
         component={CreatePostsScreen}
         options={{
-          headerShown: false,
+          headerTitleStyle: {
+            marginHorizontal: 40,
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{ marginLeft: 16 }}
+              onPress={() => alert("This is a button!")}
+              color="#212121"
+            >
+              <Icon name="arrow-left" size={24} color="#212121" />
+            </TouchableOpacity>
+          ),
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
-            <TouchableOpacity
-              onPress={null}
-              activeOpacity={0.5}
-              style={styles.addPost}
-            >
-              <AntDesign name="plus" size={24} color="#fff" />
-            </TouchableOpacity>
+            <Icon name="plus" size={24} color="#212121" />
+            // <TouchableOpacity
+            //   onPress={null}
+            //   activeOpacity={0.5}
+            //   style={styles.addPost}
+            // >
+
+            // </TouchableOpacity>
           ),
         }}
       />
@@ -79,7 +90,7 @@ export const useRoute = (isAuth) => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
-            <Ionicons name="person-outline" size={24} color="black" />
+            <Icon name="user" size={24} color={color} />
           ),
         }}
       />
