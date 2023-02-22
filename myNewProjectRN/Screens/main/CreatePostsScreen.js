@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Camera } from "expo-camera";
 import { useEffect, useState } from "react";
@@ -18,10 +20,11 @@ const initialState = {
 };
 
 export default function CreatePostsScreen({ navigation }) {
-  const [camera, setCamera] = useState(null);
+  const [camera, setCamera] = useState("");
   const [photo, setPhoto] = useState("");
   const [descr, setDescr] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -36,16 +39,22 @@ export default function CreatePostsScreen({ navigation }) {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     const location = await Location.getCurrentPositionAsync();
-    console.log("location", location);
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocation(coords);
     setPhoto(photo.uri);
   };
 
   const sendPost = () => {
-    navigation.navigate("Публікації", { photo, ...descr });
+    navigation.navigate("DefaultScreen", { photo, descr, location });
+    setDescr(initialState);
+    setPhoto("");
   };
 
-  const navMap = () => {
-    navigation.navigate("ProfileScreen");
+  const openMap = () => {
+    navigation.navigate("Map");
   };
 
   let text = "Waiting..";
@@ -56,54 +65,56 @@ export default function CreatePostsScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.contain}>
-      <Camera style={styles.camera} ref={setCamera}>
-        {photo && (
-          <View style={styles.takePhotoContainer}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.contain}>
+        <Camera style={styles.camera} ref={setCamera}>
+          {photo && (
+            <View style={styles.takePhotoContainer}>
+              <Image
+                source={{ uri: photo }}
+                style={{ width: 360, height: 240 }}
+              ></Image>
+            </View>
+          )}
+          <TouchableOpacity style={styles.btnContain} onPress={takePhoto}>
             <Image
-              source={{ uri: photo }}
-              style={{ width: 360, height: 240 }}
+              style={styles.openCamera}
+              source={require("../../assets/images/camera.png")}
             ></Image>
-          </View>
-        )}
-        <TouchableOpacity style={styles.btnContain} onPress={takePhoto}>
-          <Image
-            style={styles.openCamera}
-            source={require("../../assets/images/camera.png")}
-          ></Image>
-        </TouchableOpacity>
-      </Camera>
-      <Text style={styles.textCamera}>Завантажте фото</Text>
-      <View>
-        <View>
-          <TextInput
-            value={descr.name}
-            style={styles.name}
-            placeholder="Назва..."
-            onChangeText={(value) =>
-              setDescr((prev) => ({ ...prev, name: value }))
-            }
-          />
-        </View>
-        <View style={styles.localContain}>
-          <TouchableOpacity onPress={navMap}>
-            <Icon name="map-pin" size={24} color="#BDBDBD" />
           </TouchableOpacity>
+        </Camera>
+        <Text style={styles.textCamera}>Завантажте фото</Text>
+        <View>
+          <View>
+            <TextInput
+              value={descr.name}
+              style={styles.name}
+              placeholder="Назва..."
+              onChangeText={(value) =>
+                setDescr((prev) => ({ ...prev, name: value }))
+              }
+            />
+          </View>
+          <View style={styles.localContain}>
+            <TouchableOpacity onPress={openMap}>
+              <Icon name="map-pin" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
 
-          <TextInput
-            value={descr.local}
-            style={styles.local}
-            placeholder="Місцевість..."
-            onChangeText={(value) =>
-              setDescr((prev) => ({ ...prev, local: value }))
-            }
-          />
+            <TextInput
+              value={descr.local}
+              style={styles.local}
+              placeholder="Місцевість..."
+              onChangeText={(value) =>
+                setDescr((prev) => ({ ...prev, local: value }))
+              }
+            />
+          </View>
+          <TouchableOpacity style={styles.btnPublich} onPress={sendPost}>
+            <Text style={styles.btnPublichText}>Опублікувати</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.btnPublich} onPress={sendPost}>
-          <Text style={styles.btnPublichText}>Опублікувати</Text>
-        </TouchableOpacity>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

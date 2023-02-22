@@ -1,49 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, Image } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultPostsScreen from "../nested/DefaultPostsScreen";
+import MapScreen from "../nested/MapScreen";
+import CommentsScreen from "../nested/CommentsScreen";
 
-export default function PostsScreen({ route }) {
-  const [posts, setPosts] = useState([]);
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prev) => [...prev, route.params]);
-    }
-  }, [route.params]);
+const Nested = createStackNavigator();
 
-  console.log(posts);
-
+export default function PostsScreen() {
   return (
-    <>
-      <View style={styles.contain}>
-        <FlatList
-          data={posts}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Image
-                source={{ uri: item.photo }}
-                style={{ marginGorizontal: 10, height: 200 }}
-              />
-              {/* <Text>{item.descr}</Text> */}
-            </View>
-          )}
-        />
-      </View>
-    </>
+    <Nested.Navigator>
+      <Nested.Screen
+        name="DefaultScreen"
+        component={DefaultPostsScreen}
+        options={{ headerShown: false }}
+      />
+      <Nested.Screen
+        name="Коментарі"
+        component={CommentsScreen}
+        options={{
+          headerTitleStyle: {
+            marginHorizontal: 70,
+          },
+        }}
+      />
+      <Nested.Screen
+        name="Карта"
+        component={MapScreen}
+        options={{
+          headerTitleStyle: {
+            marginHorizontal: 100,
+          },
+        }}
+      />
+    </Nested.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  contain: {
-    flex: 1,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-  header: {
-    fontFamily: "Roboto-Medium",
-    fontSize: 17,
-    lineHeight: 22,
-    color: "#212121",
-  },
-});
