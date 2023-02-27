@@ -5,18 +5,17 @@ import {
   View,
 } from "react-native";
 
-import { useRoute } from "./router";
-
-import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
+import { store } from "./redux/store";
+import Main from "./components/Main";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const routing = useRoute({});
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
@@ -31,10 +30,13 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <NavigationContainer>{routing}</NavigationContainer>
+        <Provider store={store}>
+          <Main />
+        </Provider>
       </View>
     </TouchableWithoutFeedback>
   );

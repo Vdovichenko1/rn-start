@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { authLogin } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 import { togglePassword } from "../../utils/togglePassword";
 
@@ -18,12 +20,13 @@ const initialState = {
 };
 
 export default function LoginScreen({ navigation }) {
-  console.log(navigation);
   const { passVisibility, handlePassword } = togglePassword();
   const [state, setState] = useState(initialState);
+  const dispatch = useDispatch();
 
   const submitForm = () => {
-    console.log(state);
+    // console.log("login", state);
+    dispatch(authLogin(state));
     Keyboard.dismiss();
     setState(initialState);
   };

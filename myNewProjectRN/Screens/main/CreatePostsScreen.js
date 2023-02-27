@@ -8,11 +8,16 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { Camera } from "expo-camera";
 import { useEffect, useState } from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
+import { Camera } from "expo-camera";
 import Icon from "react-native-vector-icons/Feather";
 import * as Location from "expo-location";
+import * as MediaLibrary from "expo-media-library";
+import db from "../../firebase/config";
 
 const initialState = {
   name: "",
@@ -22,9 +27,12 @@ const initialState = {
 export default function CreatePostsScreen({ navigation }) {
   const [camera, setCamera] = useState("");
   const [photo, setPhoto] = useState("");
+  const [hasPermission, setHasPermission] = useState(null);
   const [descr, setDescr] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState(null);
   const [location, setLocation] = useState(null);
+
+  const { userId, login } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -33,28 +41,53 @@ export default function CreatePostsScreen({ navigation }) {
         setErrorMsg("Permission to access location was denied");
         return;
       }
+      const location = await Location.getCurrentPositionAsync();
+      setLocation(location);
+    })();
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
     })();
   }, []);
 
   const takePhoto = async () => {
+    console.log("comment", descr.name);
+    console.log("location", location);
     const photo = await camera.takePictureAsync();
-    const location = await Location.getCurrentPositionAsync();
-    const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-    setLocation(coords);
+    await MediaLibrary.createAssetAsync(photo.uri);
     setPhoto(photo.uri);
   };
 
-  const sendPost = () => {
-    navigation.navigate("DefaultScreen", { photo, descr, location });
-    setDescr(initialState);
-    setPhoto("");
+  const uploadPhotoToServer = async () => {
+    const storage = await getStorage();
+    const res = await fetch(photo);
+    const file = await res.blob();
+    const uniquePostId = Date.now().toString();
+    const pathReference = ref(storage, `postImage/${uniquePostId}`);
+    await uploadBytes(pathReference, file);
+    const photoURL = await getDownloadURL(pathReference);
+    return photoURL;
   };
 
-  const openMap = () => {
-    navigation.navigate("Map");
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+    const createPost = await addDoc(collection(db, "posts"), {
+      photo,
+      descr,
+      location,
+      userId,
+      login,
+    });
+    console.log(createPost);
+  };
+
+  const sendPost = async () => {
+    uploadPostToServer();
+    navigation.navigate("DefaultScreen");
+    // setDescr(initialState);
+    // setPhoto("");
   };
 
   let text = "Waiting..";
@@ -62,6 +95,17 @@ export default function CreatePostsScreen({ navigation }) {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
+  }
+
+  if (hasPermission === null) {
+    return <Text>Requesting permissions...</Text>;
+  }
+  if (hasPermission === false) {
+    return (
+      <Text>
+        Permission for camera not grated. Please change this is settings
+      </Text>
+    );
   }
 
   return (
@@ -96,7 +140,10 @@ export default function CreatePostsScreen({ navigation }) {
             />
           </View>
           <View style={styles.localContain}>
-            <TouchableOpacity onPress={openMap}>
+            <TouchableOpacity
+              onPress={null}
+              style={{ position: "absolute", top: 13 }}
+            >
               <Icon name="map-pin" size={24} color="#BDBDBD" />
             </TouchableOpacity>
 
@@ -125,13 +172,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: "#E5E5E5",
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   camera: {
     height: 240,
     marginTop: 32,
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "#E8E8E8",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -172,17 +217,17 @@ const styles = StyleSheet.create({
   },
   localContain: {
     marginBottom: 32,
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8E8E8",
-  },
-  local: {
+    // flexDirection: "row",
+    // alignItems: "center",
     // borderBottomWidth: 1,
     // borderBottomColor: "#E8E8E8",
+  },
+  local: {
     height: 50,
     fontSize: 16,
-    marginLeft: 5,
+    paddingLeft: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
   },
   btnPublich: {
     backgroundColor: "#FF6C00",

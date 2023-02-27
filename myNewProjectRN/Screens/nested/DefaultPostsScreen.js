@@ -8,15 +8,30 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import {
+  onSnapshot,
+  collection,
+  query,
+  getCountFromServer,
+} from "firebase/firestore";
+import db from "../../firebase/config";
+
 import Icon from "react-native-vector-icons/Feather";
 
 export default function DefaultPostsScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
+
+  const getAllPost = async () => {
+    const unsub = onSnapshot(query(collection(db, "posts")), async (data) => {
+      setPosts(data.docs.map(async (doc) => ({ ...doc.data(), id: doc.id })));
+    });
+    return () => unsub();
+  };
+
+  // console.log(route.params);
   useEffect(() => {
-    if (route.params) {
-      setPosts((prev) => [...prev, route.params]);
-    }
-  }, [route.params]);
+    getAllPost();
+  }, []);
 
   console.log(posts);
 

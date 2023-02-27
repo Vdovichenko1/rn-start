@@ -9,23 +9,29 @@ import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import Icon from "react-native-vector-icons/Feather";
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { authSignOutUser } from "./redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export const useRoute = (isAuth) => {
+  const dispatch = useDispatch();
+  const signOut = () => {
+    dispatch(authSignOutUser());
+  };
   if (!isAuth) {
     return (
       <Stack.Navigator>
         <Stack.Screen
           options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
+          name="Registration"
+          component={RegistrationScreen}
         />
         <Stack.Screen
           options={{ headerShown: false }}
-          name="Registration"
-          component={RegistrationScreen}
+          name="Login"
+          component={LoginScreen}
         />
       </Stack.Navigator>
     );
@@ -42,7 +48,7 @@ export const useRoute = (isAuth) => {
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 10 }}
-              onPress={() => alert("This is a button!")}
+              onPress={signOut}
               color="#212121"
             >
               <Icon name="log-out" size={24} color="#BDBDBD" />

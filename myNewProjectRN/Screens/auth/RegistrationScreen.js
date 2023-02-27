@@ -11,6 +11,10 @@ import {
   ImageBackground,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+
+import { authRegistration } from "../../redux/auth/authOperations";
+
 import { togglePassword } from "../../utils/togglePassword";
 
 const initialState = {
@@ -23,8 +27,11 @@ export default function RegistrationScreen({ navigation }) {
   const { passVisibility, handlePassword } = togglePassword();
   const [state, setState] = useState(initialState);
 
+  const dispatch = useDispatch();
+
   const submitForm = () => {
     console.log(state);
+    dispatch(authRegistration(state));
     Keyboard.dismiss();
     setState(initialState);
   };
