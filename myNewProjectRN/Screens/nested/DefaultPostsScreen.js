@@ -8,27 +8,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import {
-  onSnapshot,
-  collection,
-  query,
-  getCountFromServer,
-} from "firebase/firestore";
+import { onSnapshot, collection, query } from "firebase/firestore";
 import db from "../../firebase/config";
 
 import Icon from "react-native-vector-icons/Feather";
 
-export default function DefaultPostsScreen({ route, navigation }) {
+export default function DefaultPostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
-  const getAllPost = async () => {
-    const unsub = onSnapshot(query(collection(db, "posts")), async (data) => {
-      setPosts(data.docs.map(async (doc) => ({ ...doc.data(), id: doc.id })));
+  const getAllPost = () => {
+    const unsub = onSnapshot(query(collection(db, "posts")), (data) => {
+      setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
-    return () => unsub();
+    return unsub;
   };
 
-  // console.log(route.params);
   useEffect(() => {
     getAllPost();
   }, []);
@@ -52,12 +46,20 @@ export default function DefaultPostsScreen({ route, navigation }) {
                 }}
               >
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("Коментарі")}
+                  onPress={() =>
+                    navigation.navigate("Коментарі", { postId: item.id })
+                  }
                 >
                   <Icon name="message-circle" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Карта")}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Карта", {
+                      location: item.location,
+                    })
+                  }
+                >
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Icon name="map-pin" size={24} color="#BDBDBD" />
                     <Text style={styles.local}>{item.descr.local}</Text>

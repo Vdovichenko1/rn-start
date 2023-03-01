@@ -9,17 +9,11 @@ import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import Icon from "react-native-vector-icons/Feather";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { authSignOutUser } from "./redux/auth/authOperations";
-import { useDispatch } from "react-redux";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export const useRoute = (isAuth) => {
-  const dispatch = useDispatch();
-  const signOut = () => {
-    dispatch(authSignOutUser());
-  };
   if (!isAuth) {
     return (
       <Stack.Navigator>
@@ -39,21 +33,10 @@ export const useRoute = (isAuth) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Публікації"
+        name="PostsScreen"
         component={PostsScreen}
         options={{
-          headerTitleStyle: {
-            marginLeft: 120,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              onPress={signOut}
-              color="#212121"
-            >
-              <Icon name="log-out" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
-          ),
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
             <Icon name="grid" size={24} color="#212121" />
@@ -78,7 +61,12 @@ export const useRoute = (isAuth) => {
           ),
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
-            <Icon name="plus" size={24} color="#212121" />
+            <Icon
+              name="plus"
+              size={24}
+              color="#212121"
+              style={styles.addPost}
+            />
             // <TouchableOpacity
             //   onPress={null}
             //   activeOpacity={0.5}
@@ -106,11 +94,14 @@ export const useRoute = (isAuth) => {
 
 const styles = StyleSheet.create({
   addPost: {
-    alignItems: "center",
-    justifyContent: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 8,
     backgroundColor: "#FF6C00",
     width: 70,
     height: 40,
     borderRadius: 50,
+    color: "#fff",
   },
 });

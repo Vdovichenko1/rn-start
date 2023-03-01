@@ -59,6 +59,7 @@ export default function CreatePostsScreen({ navigation }) {
     await MediaLibrary.createAssetAsync(photo.uri);
     setPhoto(photo.uri);
   };
+  // console.log(location);
 
   const uploadPhotoToServer = async () => {
     const storage = await getStorage();
@@ -85,9 +86,9 @@ export default function CreatePostsScreen({ navigation }) {
 
   const sendPost = async () => {
     uploadPostToServer();
-    navigation.navigate("DefaultScreen");
-    // setDescr(initialState);
-    // setPhoto("");
+    navigation.navigate("Публікації");
+    setDescr(initialState);
+    setPhoto("");
   };
 
   let text = "Waiting..";
