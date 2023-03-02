@@ -16,14 +16,24 @@ export default function PostsScreen() {
     dispatch(authSignOutUser());
   };
   return (
-    <Nested.Navigator>
+    <Nested.Navigator
+      screenOptions={{
+        headerTitleAlign: "center",
+        headerStyle: { height: 88 },
+        headerTitleStyle: {
+          fontFamily: "Roboto-Medium",
+          fontSize: 17,
+          lineHeight: 22,
+          letterSpacing: -0.408,
+          color: "#212121",
+        },
+        tabBarShowLabel: false,
+      }}
+    >
       <Nested.Screen
         name="Публікації"
         component={DefaultPostsScreen}
         options={{
-          headerTitleStyle: {
-            marginLeft: 120,
-          },
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 10 }}

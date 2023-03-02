@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
@@ -31,8 +31,10 @@ export default function CreatePostsScreen({ navigation }) {
   const [descr, setDescr] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState(null);
   const [location, setLocation] = useState(null);
+  const isFocused = useIsFocused();
 
   const { userId, login } = useSelector((state) => state.auth);
+  const buttonDisable = photo && descr;
 
   useEffect(() => {
     (async () => {
@@ -53,8 +55,8 @@ export default function CreatePostsScreen({ navigation }) {
   }, []);
 
   const takePhoto = async () => {
-    console.log("comment", descr.name);
-    console.log("location", location);
+    // console.log("comment", descr.name);
+    // console.log("location", location);
     const photo = await camera.takePictureAsync();
     await MediaLibrary.createAssetAsync(photo.uri);
     setPhoto(photo.uri);
@@ -99,7 +101,15 @@ export default function CreatePostsScreen({ navigation }) {
   }
 
   if (hasPermission === null) {
-    return <Text>Requesting permissions...</Text>;
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator
+          size="large"
+          color="#FF6C00
+"
+        />
+      </View>
+    );
   }
   if (hasPermission === false) {
     return (
@@ -110,59 +120,79 @@ export default function CreatePostsScreen({ navigation }) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.contain}>
+    <View style={styles.contain}>
+      {isFocused && (
         <Camera style={styles.camera} ref={setCamera}>
           {photo && (
             <View style={styles.takePhotoContainer}>
               <Image
                 source={{ uri: photo }}
                 style={{ width: 360, height: 240 }}
-              ></Image>
+              />
             </View>
           )}
-          <TouchableOpacity style={styles.btnContain} onPress={takePhoto}>
+          <TouchableOpacity
+            style={{
+              ...styles.btnContain,
+              backgroundColor: photo ? "rgba(255, 255, 255, 0.3)" : "#fff",
+              borderWidth: photo ? 0 : 1,
+            }}
+            onPress={takePhoto}
+          >
             <Image
               style={styles.openCamera}
               source={require("../../assets/images/camera.png")}
-            ></Image>
+            />
           </TouchableOpacity>
         </Camera>
-        <Text style={styles.textCamera}>Завантажте фото</Text>
+      )}
+      <Text style={styles.textCamera}>Завантажте фото</Text>
+      <View>
         <View>
-          <View>
-            <TextInput
-              value={descr.name}
-              style={styles.name}
-              placeholder="Назва..."
-              onChangeText={(value) =>
-                setDescr((prev) => ({ ...prev, name: value }))
-              }
-            />
-          </View>
-          <View style={styles.localContain}>
-            <TouchableOpacity
-              onPress={null}
-              style={{ position: "absolute", top: 13 }}
-            >
-              <Icon name="map-pin" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
-
-            <TextInput
-              value={descr.local}
-              style={styles.local}
-              placeholder="Місцевість..."
-              onChangeText={(value) =>
-                setDescr((prev) => ({ ...prev, local: value }))
-              }
-            />
-          </View>
-          <TouchableOpacity style={styles.btnPublich} onPress={sendPost}>
-            <Text style={styles.btnPublichText}>Опублікувати</Text>
-          </TouchableOpacity>
+          <TextInput
+            value={descr.name}
+            style={styles.name}
+            placeholder="Назва..."
+            onChangeText={(value) =>
+              setDescr((prev) => ({ ...prev, name: value }))
+            }
+          />
         </View>
+        <View style={styles.localContain}>
+          <TouchableOpacity
+            onPress={null}
+            style={{ position: "absolute", top: 13 }}
+          >
+            <Icon name="map-pin" size={24} color="#BDBDBD" />
+          </TouchableOpacity>
+
+          <TextInput
+            value={descr.local}
+            style={styles.local}
+            placeholder="Місцевість..."
+            onChangeText={(value) =>
+              setDescr((prev) => ({ ...prev, local: value }))
+            }
+          />
+        </View>
+        <TouchableOpacity
+          style={{
+            ...styles.btnPublich,
+            backgroundColor: buttonDisable ? "#FF6C00" : "#F6F6F6",
+          }}
+          onPress={sendPost}
+        >
+          <Text
+            style={{
+              ...styles.btnPublichText,
+              color: buttonDisable ? "#fff" : "#BDBDBD",
+            }}
+          >
+            Опублікувати
+          </Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 }
 

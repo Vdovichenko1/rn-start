@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ImageBackground,
   Keyboard,
@@ -22,10 +22,24 @@ const initialState = {
 export default function LoginScreen({ navigation }) {
   const { passVisibility, handlePassword } = togglePassword();
   const [state, setState] = useState(initialState);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setIsShowKeyboard(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   const submitForm = () => {
-    // console.log("login", state);
     dispatch(authLogin(state));
     Keyboard.dismiss();
     setState(initialState);
@@ -74,7 +88,11 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View
-          style={{ ...styles.contain, marginBottom: 115, flexDirection: "row" }}
+          style={{
+            ...styles.contain,
+            marginBottom: isShowKeyboard ? -100 : 115,
+            flexDirection: "row",
+          }}
         >
           <Text>Немає акаунта? </Text>
           <TouchableOpacity

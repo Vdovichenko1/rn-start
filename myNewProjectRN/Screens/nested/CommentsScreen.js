@@ -17,7 +17,7 @@ import { collection, addDoc, onSnapshot, query } from "firebase/firestore";
 import db from "../../firebase/config";
 
 export default function CommentsScreen({ route }) {
-  const { postId } = route.params;
+  const { postId, avatar, photo } = route.params;
   console.log(postId);
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
@@ -31,6 +31,7 @@ export default function CommentsScreen({ route }) {
     await addDoc(collection(db, "posts", postId, "comments"), {
       comment,
       login,
+      avatar,
     });
     setComment("");
   };
@@ -47,19 +48,29 @@ export default function CommentsScreen({ route }) {
 
   return (
     <View style={styles.contain}>
-      <SafeAreaView>
-        <FlatList
-          data={allComments}
-          renderItem={({ item }) => (
-            <View style={styles.commentContain}>
-              {/* <Image source={{ uri: item.photo }} style={styles.photo} /> */}
-              <Text>{item.login}</Text>
-              <Text style={styles.commentFriend}>{item.comment}</Text>
+      <Image source={{ uri: photo }} style={styles.photo} />
+      <FlatList
+        style={{ marginTop: 32 }}
+        data={allComments}
+        renderItem={({ item }) => (
+          <View style={styles.commentContain}>
+            <View style={{ flexDirection: "column", alignItems: "center" }}>
+              <Image source={{ uri: avatar }} style={styles.avatar} />
+              <Text
+                style={{
+                  marginTop: 6,
+                  fontSize: 14,
+                  fontFamily: "Roboto-Medium",
+                }}
+              >
+                {item.login}
+              </Text>
             </View>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </SafeAreaView>
+            <Text style={styles.commentFriend}>{item.comment}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+      />
       <View style={styles.commentInput}>
         <TextInput
           placeholder="Коментувати..."
@@ -83,9 +94,21 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#E5E5E5",
   },
+  photo: {
+    height: 240,
+    borderRadius: 8,
+    marginTop: 32,
+  },
   commentContain: {
     flexDirection: "row",
+    alignItems: "center",
     marginBottom: 30,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    marginRight: 8,
   },
   commentFriend: {
     borderWidth: 1,
@@ -94,8 +117,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    width: 300,
     marginLeft: 16,
+    width: 250,
   },
   commentInput: {
     justifyContent: "center",

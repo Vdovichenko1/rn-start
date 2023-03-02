@@ -31,14 +31,24 @@ export const useRoute = (isAuth) => {
     );
   }
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerTitleAlign: "center",
+        headerStyle: { height: 88 },
+        headerTitleStyle: styles.header,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: 83,
+        },
+      }}
+    >
       <Tab.Screen
         name="PostsScreen"
         component={PostsScreen}
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: (focused, size, color) => (
+          tabBarIcon: (focused) => (
             <Icon name="grid" size={24} color="#212121" />
           ),
         }}
@@ -47,19 +57,15 @@ export const useRoute = (isAuth) => {
         name="Створити публікацію"
         component={CreatePostsScreen}
         options={{
-          headerTitleStyle: {
-            marginHorizontal: 40,
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              style={{ marginLeft: 16 }}
-              onPress={() => alert("This is a button!")}
-              color="#212121"
-            >
-              <Icon name="arrow-left" size={24} color="#212121" />
-            </TouchableOpacity>
-          ),
-          tabBarShowLabel: false,
+          // headerLeft: () => (
+          //   <TouchableOpacity
+          //     style={{ marginLeft: 16 }}
+          //     onPress={() => alert("This is a button!")}
+          //     color="#212121"
+          //   >
+          //     <Icon name="arrow-left" size={24} color="#212121" />
+          //   </TouchableOpacity>
+          // ),
           tabBarIcon: (focused, size, color) => (
             <Icon
               name="plus"
@@ -84,7 +90,7 @@ export const useRoute = (isAuth) => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: (focused, size, color) => (
-            <Icon name="user" size={24} color={color} />
+            <Icon name="user" size={24} color="#212121" />
           ),
         }}
       />
@@ -93,6 +99,13 @@ export const useRoute = (isAuth) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 17,
+    lineHeight: 22,
+    letterSpacing: -0.408,
+    color: "#212121",
+  },
   addPost: {
     // alignItems: "center",
     // justifyContent: "center",

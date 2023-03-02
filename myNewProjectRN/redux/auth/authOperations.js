@@ -11,7 +11,7 @@ import { authSlice } from "./authReducer";
 const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
 export const authRegistration =
-  ({ login, email, password }) =>
+  ({ login, email, password }, image) =>
   async (dispatch) => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
@@ -19,18 +19,20 @@ export const authRegistration =
         const user = userCredential.user;
         updateProfile(auth.currentUser, {
           displayName: login,
+          photoURL: image,
         }).then(() => {
-          const { uid, displayName } = user;
+          const { uid, displayName, photoURL } = user;
+          console.log("photoURL", photoURL);
           console.log("uid, displayName", uid, displayName);
           dispatch(
             updateUserProfile({
               userId: uid,
               login: displayName,
+              avatar: photoURL,
             })
           );
           console.log(user);
         });
-        // user.updateProfile({ displayName: login });
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -76,6 +78,7 @@ export const authStateChangeUser = () => async (dispatch) => {
         updateUserProfile({
           userId: user.uid,
           login: user.displayName,
+          avatar: user.photoURL,
         })
       );
       dispatch(authStateChange({ stateChange: true }));
