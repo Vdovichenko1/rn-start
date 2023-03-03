@@ -17,11 +17,13 @@ export const authRegistration =
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        console.log(user);
         updateProfile(auth.currentUser, {
           displayName: login,
           photoURL: image,
+          email: email,
         }).then(() => {
-          const { uid, displayName, photoURL } = user;
+          const { uid, displayName, photoURL, email } = user;
           console.log("photoURL", photoURL);
           console.log("uid, displayName", uid, displayName);
           dispatch(
@@ -29,6 +31,7 @@ export const authRegistration =
               userId: uid,
               login: displayName,
               avatar: photoURL,
+              email: email,
             })
           );
           console.log(user);
@@ -79,6 +82,7 @@ export const authStateChangeUser = () => async (dispatch) => {
           userId: user.uid,
           login: user.displayName,
           avatar: user.photoURL,
+          email: user.email,
         })
       );
       dispatch(authStateChange({ stateChange: true }));

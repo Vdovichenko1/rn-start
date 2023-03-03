@@ -13,10 +13,15 @@ import db from "../../firebase/config";
 
 import Icon from "react-native-vector-icons/Feather";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { authStateChangeUser } from "../../redux/auth/authOperations";
 
 export default function DefaultPostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
-  const [userData, setUserData] = useState({});
+  // const [userData, setUserData] = useState({});
+  const dispatch = useDispatch();
+
+  const { avatar, login, email } = useSelector((state) => state.auth);
 
   const getAllPost = () => {
     const unsub = onSnapshot(query(collection(db, "posts")), (data) => {
@@ -25,24 +30,25 @@ export default function DefaultPostsScreen({ navigation }) {
     return unsub;
   };
 
-  const userInfo = () => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const userInfo = {
-          userName: user.displayName,
-          avatar: user.photoURL,
-          email: user.email,
-        };
-        setUserData(userInfo);
-      } else {
-        // setUserData(null);
-      }
-    });
-  };
+  // const userInfo = () => {
+  //   const auth = getAuth();
+  //   onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       const userInfo = {
+  //         userName: user.displayName,
+  //         avatar: user.photoURL,
+  //         email: user.email,
+  //       };
+  //       setUserData(userInfo);
+  //     } else {
+  //       // setUserData(null);
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
-    userInfo();
+    // userInfo();
+    dispatch(authStateChangeUser(avatar, login));
     getAllPost();
   }, []);
 
@@ -51,10 +57,10 @@ export default function DefaultPostsScreen({ navigation }) {
   return (
     <View style={styles.contain}>
       <View style={styles.userInfo}>
-        <Image source={{ uri: userData.avatar }} style={styles.avatar} />
+        <Image source={{ uri: avatar }} style={styles.avatar} />
         <View>
-          <Text style={styles.userName}>{userData.userName}</Text>
-          <Text style={styles.email}>{userData.email}</Text>
+          <Text style={styles.userName}>{login}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <FlatList
@@ -75,7 +81,7 @@ export default function DefaultPostsScreen({ navigation }) {
                 onPress={() =>
                   navigation.navigate("Коментарі", {
                     postId: item.id,
-                    avatar: userData.avatar,
+                    avatar: avatar,
                     photo: item.photo,
                   })
                 }

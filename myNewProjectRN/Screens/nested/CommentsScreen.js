@@ -33,7 +33,7 @@ export default function CommentsScreen({ route }) {
       login,
       avatar,
     });
-    setComment("");
+    await setComment("");
   };
 
   const getAllPosts = () => {

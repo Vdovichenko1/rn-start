@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  Keyboard,
 } from "react-native";
 import db from "../../firebase/config";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
@@ -122,11 +121,9 @@ const styles = StyleSheet.create({
   imageBG: {
     flex: 1,
     recizeMode: "cover",
-    // justifyContent: "flex-end",
   },
   contain: {
-    // alignItems: "center",
-    // justifyContent: "center",
+    flex: 1,
     marginTop: 150,
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,

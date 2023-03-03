@@ -8,7 +8,7 @@ import CreatePostsScreen from "./Screens/main/CreatePostsScreen";
 import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import Icon from "react-native-vector-icons/Feather";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,8 +48,12 @@ export const useRoute = (isAuth) => {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: (focused) => (
-            <Icon name="grid" size={24} color="#212121" />
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="grid"
+              size={24}
+              style={{ color: focused ? "#FF6C00" : "#212121" }}
+            />
           ),
         }}
       />
@@ -66,13 +70,19 @@ export const useRoute = (isAuth) => {
           //     <Icon name="arrow-left" size={24} color="#212121" />
           //   </TouchableOpacity>
           // ),
-          tabBarIcon: (focused, size, color) => (
-            <Icon
-              name="plus"
-              size={24}
-              color="#212121"
-              style={styles.addPost}
-            />
+          tabBarIcon: ({ focused, size, color }) => (
+            <View
+              style={{
+                ...styles.bottomTabIcon,
+                backgroundColor: focused ? "#F6F6F6" : "#FF6C00",
+              }}
+            >
+              {focused ? (
+                <Icon name="trash-2" color="#BDBDBD" size={24} />
+              ) : (
+                <Icon name="plus" color="#fff" size={24} />
+              )}
+            </View>
             // <TouchableOpacity
             //   onPress={null}
             //   activeOpacity={0.5}
@@ -89,8 +99,12 @@ export const useRoute = (isAuth) => {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: (focused, size, color) => (
-            <Icon name="user" size={24} color="#212121" />
+          tabBarIcon: ({ focused, size, color }) => (
+            <Icon
+              name="user"
+              size={24}
+              style={{ color: focused ? "#FF6C00" : "#212121" }}
+            />
           ),
         }}
       />
@@ -105,6 +119,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: -0.408,
     color: "#212121",
+  },
+  bottomTabIcon: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 70,
+    height: 40,
+    borderRadius: 20,
   },
   addPost: {
     // alignItems: "center",
