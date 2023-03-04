@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Text,
   Image,
+  Keyboard,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -23,24 +24,32 @@ export default function CommentsScreen({ route }) {
   const [allComments, setAllComments] = useState([]);
   const { login } = useSelector((state) => state.auth);
 
+  // const [commentCount, setCommentCount] = useState(0);
+
   useEffect(() => {
     getAllPosts();
   }, []);
 
   const createComment = async () => {
+    // setCommentCount(commentCount + 1);
     await addDoc(collection(db, "posts", postId, "comments"), {
       comment,
       login,
       avatar,
     });
-    await setComment("");
+    setComment("");
+    Keyboard.dismiss();
   };
 
   const getAllPosts = () => {
     const unsub = onSnapshot(
       query(collection(db, "posts", postId, "comments")),
       (data) => {
-        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setAllComments(
+          data.docs
+            .map((doc) => ({ ...doc.data(), id: doc.id }))
+            .sort((a, b) => a.date - b.date)
+        );
       }
     );
     return unsub;
@@ -74,7 +83,8 @@ export default function CommentsScreen({ route }) {
       <View style={styles.commentInput}>
         <TextInput
           placeholder="Коментувати..."
-          onChangeText={setComment}
+          value={comment}
+          onChangeText={(e) => setComment(e)}
           style={styles.comment}
         />
         <TouchableOpacity onPress={createComment} style={styles.arrow}>

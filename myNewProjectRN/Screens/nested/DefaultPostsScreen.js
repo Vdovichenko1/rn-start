@@ -12,11 +12,10 @@ import { onSnapshot, collection, query } from "firebase/firestore";
 import db from "../../firebase/config";
 
 import Icon from "react-native-vector-icons/Feather";
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { authStateChangeUser } from "../../redux/auth/authOperations";
 
-export default function DefaultPostsScreen({ navigation }) {
+export default function DefaultPostsScreen({ navigation, commentCount }) {
   const [posts, setPosts] = useState([]);
   // const [userData, setUserData] = useState({});
   const dispatch = useDispatch();
@@ -87,7 +86,7 @@ export default function DefaultPostsScreen({ navigation }) {
                 }
               >
                 <Icon name="message-circle" size={24} color="#BDBDBD" />
-                <Text style={styles.countComment}>0</Text>
+                <Text style={styles.countComment}>{commentCount}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

@@ -8,12 +8,28 @@ import CreatePostsScreen from "./Screens/main/CreatePostsScreen";
 import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import Icon from "react-native-vector-icons/Feather";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export const useRoute = (isAuth) => {
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setIsShowKeyboard(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   if (!isAuth) {
     return (
       <Stack.Navigator>
@@ -38,7 +54,7 @@ export const useRoute = (isAuth) => {
         headerTitleStyle: styles.header,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 83,
+          height: isShowKeyboard ? 0 : 83,
         },
       }}
     >
@@ -70,11 +86,13 @@ export const useRoute = (isAuth) => {
           //     <Icon name="arrow-left" size={24} color="#212121" />
           //   </TouchableOpacity>
           // ),
+
           tabBarIcon: ({ focused, size, color }) => (
             <View
               style={{
                 ...styles.bottomTabIcon,
                 backgroundColor: focused ? "#F6F6F6" : "#FF6C00",
+                opacity: isShowKeyboard ? 0 : 1,
               }}
             >
               {focused ? (

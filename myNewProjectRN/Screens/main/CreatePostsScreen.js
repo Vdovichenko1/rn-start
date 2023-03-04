@@ -28,6 +28,7 @@ export default function CreatePostsScreen({ navigation }) {
   const [camera, setCamera] = useState("");
   const [photo, setPhoto] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
+  const [hasMediaPermission, setHasMediaPermission] = useState(null);
   const [descr, setDescr] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState(null);
   const [location, setLocation] = useState(null);
@@ -48,20 +49,18 @@ export default function CreatePostsScreen({ navigation }) {
     })();
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      await MediaLibrary.requestPermissionsAsync();
+      const media = await MediaLibrary.requestPermissionsAsync();
 
       setHasPermission(status === "granted");
+      setHasMediaPermission(media.status === "granted");
     })();
   }, []);
 
   const takePhoto = async () => {
-    // console.log("comment", descr.name);
-    // console.log("location", location);
     const photo = await camera.takePictureAsync();
     await MediaLibrary.createAssetAsync(photo.uri);
     setPhoto(photo.uri);
   };
-  // console.log(location);
 
   const uploadPhotoToServer = async () => {
     const storage = await getStorage();
